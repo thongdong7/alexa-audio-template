@@ -1,7 +1,7 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "audio player",
+      "invocationName": "{{invocation_name}}",
       "intents": [
         {
           "name": "AMAZON.CancelIntent",
@@ -27,22 +27,10 @@
 
           ],
           "samples": [
-            "audio player",
-            "begin podcast",
-            "begin the podcast",
-            "begin playing the podcast",
-            "start podcast",
-            "start the podcast",
-            "start playing the podcast",
-            "play the podcast",
-            "to play",
-            "to begin podcast",
-            "to begin the podcast",
-            "to begin playing the podcast",
-            "to start podcast",
-            "to start the podcast",
-            "to start playing the podcast",
-            "to play the podcast"
+            "play audio",
+            "play the audio",
+            "read book",
+            "to play"
           ]
         },
         {

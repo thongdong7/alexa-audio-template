@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 
+import boto3
 from ask_sdk.standard import StandardSkillBuilder
 from ask_sdk_core.dispatch_components import (
     AbstractRequestHandler, AbstractExceptionHandler,
@@ -64,10 +66,10 @@ class LaunchRequestHandler(AbstractRequestHandler):
             reprompt = data.WELCOME_REPROMPT_MSG
         else:
             playback_info['in_playback_session'] = False
-            message = data.WELCOME_PLAYBACK_MSG.format(
-                data.AUDIO_DATA[
-                    playback_info.get("play_order")[
-                        playback_info.get("index")]].get("title"))
+            index_ = playback_info.get("index")
+            title = data.AUDIO_DATA[playback_info.get("play_order")[index_]].get("title") or f'Episode {index_ + 1}'
+
+            message = data.WELCOME_PLAYBACK_MSG.format(title)
             reprompt = data.WELCOME_PLAYBACK_REPROMPT_MSG
 
         return handler_input.response_builder.speak(message).ask(
@@ -624,7 +626,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
         # type: (HandlerInput, Exception) -> Response
         logger.info("In CatchAllExceptionHandler")
         logger.error(exception, exc_info=True)
-        handler_input.response_builder.speak(data.EXCEPTION_MSG).ask(
+        handler_input.response_builder.speak(data.EXCEPTION_MSG + str(exception)).ask(
             data.EXCEPTION_MSG)
 
         return handler_input.response_builder.response
@@ -692,9 +694,8 @@ class SavePersistenceAttributesResponseInterceptor(AbstractResponseInterceptor):
 sb = StandardSkillBuilder(
     table_name=data.DYNAMODB_TABLE_NAME,
     auto_create_table=False,
-
+    dynamodb_client=boto3.resource("dynamodb", region_name=os.environ['DYNAMODB_PERSISTENCE_REGION'])
 )
-# sb = SkillBuilder()
 
 # ############# REGISTER HANDLERS #####################
 # Request Handlers
